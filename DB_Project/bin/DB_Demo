@@ -1,0 +1,87 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DBTest_Demo {
+	public DBTest_Demo (){
+	}
+public int testconnection_mysql (int offset) {        
+		String connection_host = "mysql host location";
+		Connection connect = null;
+        		PreparedStatement preparedStatement = null;
+        		ResultSet rs;
+        		int flag = 0;
+		try {  connect = DriverManager
+	    		          .getConnection("jdbc:mysql://localhost/e_community?"+ "user=whatever&password=whatever");
+
+		      // This will load the MySQL driver, each DB has its own driver
+		      Class.forName("com.mysql.jdbc.Driver");
+		      // Setup the connection with the DB
+		      	    	  String qry1a = "SELECT CURDATE() + " + offset; // make method to select sql string 
+	    	  preparedStatement = connect.prepareStatement(qry1a);
+	    	  ResultSet r1=preparedStatement.executeQuery();
+	             if (r1.next())
+	             {
+	              String nt = r1.getString(1); 
+	              System.out.println(offset + " hour(s) ahead of the system clock of mysql at " + connection_host + " is:" + nt);
+	            }
+	            r1.close();
+	            preparedStatement.close();
+	    	} catch (Exception e) {
+	    		try {
+					throw e;
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		  	} finally {
+			      if (preparedStatement != null) {
+				        try {
+							preparedStatement.close();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				  }	      
+			      if (connect != null) {
+			        try {
+						connect.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			      }
+		    }
+		return flag;
+	}  
+	public static void main(String[] args)
+	{
+		try
+		{
+			if (args.length != 1) {
+				System.out.println("Usage: java -jar DBTest_Demo.jar <number_of_offset>");
+				System.out.println("Success returns errorlevel 0. Error return greater than zero.");
+				System.exit(1);
+			}
+	    	System.out.println("\n");    	
+	    	DBTest_Demo DBConnect_instance = new DBTest_Demo();
+	    	if (DBConnect_instance.testconnection_mysql(Integer.parseInt(args[0])) == 0) {
+	            System.out.println("MYSQL Remote Connection Successful Completion");
+	        } else {
+	            System.out.println("mysql DB connection fail");
+	        }
+	    	
+	       //DBConnect_instance.testconnection_mysql(Integer.parseInt(args[0]));
+		} 
+		catch (Exception e){
+			// probably error in input
+			System.out.println("Hmmm... Looks like input error ....");
+		}		
+  }	
+}
+
+
