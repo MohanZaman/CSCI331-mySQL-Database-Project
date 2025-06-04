@@ -1,0 +1,22 @@
+CREATE TABLE problems (
+    problem_id INT AUTO_INCREMENT PRIMARY KEY,
+    description TEXT,
+    has_SQL VARCHAR(3) DEFAULT 'NO'
+);
+
+CREATE TABLE sql_contributions (
+    sc_id INT AUTO_INCREMENT PRIMARY KEY,
+    problem_id INT,
+    sql_statement TEXT,
+    FOREIGN KEY (problem_id) REFERENCES problems(problem_id)
+);
+
+CREATE TABLE runnable_queries (
+    runnable_query_id INT AUTO_INCREMENT PRIMARY KEY,
+    problem_id INT,
+    sc_id INT,
+    parameter VARCHAR(255),
+    parameter_type VARCHAR(50),
+    FOREIGN KEY (problem_id) REFERENCES problems(problem_id),
+    FOREIGN KEY (sc_id) REFERENCES sql_contributions(sc_id)
+);
